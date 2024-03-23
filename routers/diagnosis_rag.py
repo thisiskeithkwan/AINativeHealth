@@ -3,14 +3,13 @@ from pydantic import BaseModel, Field
 import time
 from typing import Literal, Optional, Any, Iterable, List
 import json
-from config import instructor_client, realtime_db, db, RAG
+from config import instructor_client, realtime_db, db
 import instructor
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from typing import Iterable
 from utils.realtime_utils import update_realtime_diagnosis_output
 from utils.firestore_utils import get_session, get_patient_record, append_diagnosis, append_treatment
-
 
 router = APIRouter()
 
@@ -197,53 +196,6 @@ def formulate_diagnosis_input(session_id: str):
     return message, patient_id, is_follow_up
   else:
     return "Session not found", None, False
-
-
-def formulate_diagnosis_input_with_RAG(session_id: str):
-    session = get_session(session_id)
-    if session:
-        patient_id = session.get('patient_id', '')
-        is_follow_up = session.get('is_follow_up', False)
-        diagnosis = session.get('diagnosis', [])
-
-        latest_diagnosis = diagnosis[-1] if diagnosis else {}
-
-        transcript = latest_diagnosis.get('transcript', [])
-        doctor_input = latest_diagnosis.get('doctor_input', '')
-        ai_response = latest_diagnosis.get('ai_response', '')
-        print(type(ai_response))
-        ddx = ai_response.get('ddx', [])
-        print(type(ddx))
-
-
-        references = []
-        for disease in ddx:
-            # Search for relevant information for the disease
-            reference_results = RAG.search(disease, k=2)
-
-            # Extract the content from the search results
-            reference_texts = [result['content'] for result in reference_results]
-
-            # Append the reference texts to the list
-            references.extend(reference_texts)
-
-        # Join the references into a single string
-        references_str = '\n'.join(references)
-        print(references_str)
-
-        message = f'''Transcript: {' '.join(transcript)}
-Doctor's input: {doctor_input}
-AI response: {ai_response}
-
-Patient's health record: {get_patient_record(patient_id)}
-References:
-{references_str}
-'''
-
-        return message, patient_id, is_follow_up
-    else:
-        return "Session not found", None, False
-
 
 
 @router.post("/diagnosis/{session_id}")

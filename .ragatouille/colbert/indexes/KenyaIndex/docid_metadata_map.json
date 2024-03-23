@@ -1,0 +1,17 @@
+{
+  "c97597c0-26b7-47df-b121-56436efcaa6e":{
+    "condition":[
+      "Anaphylaxis"
+    ]
+  },
+  "21786818-f23a-4397-a2f0-dfb1d4faa44d":{
+    "condition":[
+      "Cardiac Arrest"
+    ]
+  },
+  "998a1554-81b0-4c7c-ba34-eec04dc89d33":{
+    "condition":[
+      "Shock"
+    ]
+  }
+}

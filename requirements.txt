@@ -1,0 +1,7 @@
+fastapi 
+uvicorn
+instructor
+openai
+firebase-admin
+pydantic
+ragatouille
