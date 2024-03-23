@@ -248,7 +248,7 @@ References:
 
 @router.post("/diagnosis/{session_id}")
 def generate_diagnosis_output(session_id: str):
-  user_message, patient_id, is_follow_up = formulate_diagnosis_input(
+  user_message, patient_id, is_follow_up = formulate_diagnosis_input_with_RAG(
       session_id)
   response = instructor_client.chat.completions.create(
       model="gpt-4-turbo-preview",
